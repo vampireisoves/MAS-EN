@@ -40,9 +40,9 @@ jobs:
       - name: 检查更新
         id: check
         run: |
-          git checkout main
-          LOCAL=$(git rev-parse main)
-          UPSTREAM=$(git rev-parse upstream/main)
+          git checkout master
+          LOCAL=$(git rev-parse master)
+          UPSTREAM=$(git rev-parse upstream/master)
           if [ "$LOCAL" != "$UPSTREAM" ]; then
             echo "has_update=true" >> $GITHUB_OUTPUT
           else
@@ -52,8 +52,8 @@ jobs:
       - name: 合并并推送
         if: ${{ steps.check.outputs.has_update == 'true' }}
         run: |
-          git merge upstream/main --no-edit --allow-unrelated-histories
-          git push origin main
+          git merge upstream/master --no-edit --allow-unrelated-histories
+          git push origin master
 
   del_runs:
     needs: sync-upstream
