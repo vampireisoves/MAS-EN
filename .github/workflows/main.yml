@@ -11,10 +11,10 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # - cron: '*/15 * * * *'  #15分钟
-    # - cron: '0 */6 * * *'  # 6小时
-    # - cron: '0 */12 * * *'  # 12小时
-    - cron: '0 0 * * *'  # 24小时
+    # - cron: '*/15 * * * *'      # 15分钟
+    # - cron: '0 */6 * * *'        # 6小时
+    # - cron: '0 */12 * * *'       # 12小时
+    - cron: '0 0 * * *'            # 24小时
 
 jobs:
   sync-upstream:
@@ -23,20 +23,20 @@ jobs:
     steps:
       - name: Checkout 代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # ====================== 【必须改 1】上游仓库地址 ======================
       - name: 关联上游
         run: |
+          git remote remove upstream 2>/dev/null || true
           git remote add upstream https://github.com/massgravel/Microsoft-Activation-Scripts.git
           git fetch upstream
-      # ====================================================================
 
       - name: 配置Git身份
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # ====================== 【必须改 2】分支（main/master）=================
       - name: 检查更新
         id: check
         run: |
@@ -48,7 +48,6 @@ jobs:
           else
             echo "has_update=false" >> $GITHUB_OUTPUT
           fi
-      # ====================================================================
 
       - name: 合并并推送
         if: ${{ steps.check.outputs.has_update == 'true' }}
